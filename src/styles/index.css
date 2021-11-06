@@ -13,3 +13,29 @@ html, body {
 canvas {
     display: block;
 }
+
+/* To remove the scrollbars */
+.app-game {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.app-game > canvas{
+    background-color: #2E3440 !important;/* [Nord] Polar Night-0 */
+}
+
+@media screen and (max-aspect-ratio: 16/9) {
+    .app-game > canvas {
+        width: 100%;
+    }
+}
+
+@media screen and (min-aspect-ratio: 16/9) {
+    .app-game > canvas {
+        height: 100%;
+    }
+}
