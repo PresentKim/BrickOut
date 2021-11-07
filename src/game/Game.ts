@@ -43,20 +43,23 @@ export default abstract class Game<El extends HTMLElement> {
         (this.render.context as any).webkitImageSmoothingEnabled = false; //Safari
         (this.render.context as any).msImageSmoothingEnabled = false; //IE
 
-        CanvasClick.addClickListener('start', this.render.canvas, this.onClickStart.bind(this));
-        CanvasClick.addClickListener('move', this.render.canvas, this.onClickMove.bind(this));
-        CanvasClick.addClickListener('end', this.render.canvas, this.onClickEnd.bind(this));
+        CanvasClick.addClickListener('start', this.render.canvas, this.onClickStart.bind(this), this.render.canvas.parentElement);
+        CanvasClick.addClickListener('move', this.render.canvas, this.onClickMove.bind(this), this.render.canvas.parentElement);
+        CanvasClick.addClickListener('end', this.render.canvas, this.onClickEnd.bind(this), this.render.canvas.parentElement);
 
-        Render.run(this.render);
-        Runner.run(this.runner, this.engine);
+        this.render.run();
+        this.runner.run(this.engine);
     }
 
+    /** Fired when started click on canvas */
     public onClickStart(click: CanvasClick): void {
     }
 
+    /** Fired when the click moves on the canvas */
     public onClickMove(click: CanvasClick): void {
     }
 
+    /** Fired when ended click on canvas */
     public onClickEnd(click: CanvasClick): void {
     }
 

@@ -1,4 +1,4 @@
-import {Bodies, Body, Bounds, Composite, Engine, Events, IEventCollision, Vector} from "matter-js";
+import {Bodies, Body, Bounds, IPair, Vector} from "matter-js";
 import CanvasClick from 'canvas-click-wrapper';
 import Game from "@/game/Game";
 import utils from "@/utils/utils";
@@ -12,6 +12,13 @@ const DUMMY_COUNT = 100;
 export default class TestGame extends Game<HTMLDivElement> {
     private readonly borders: Set<Body> = this.createBorderWalls();
     private readonly dummies: Set<Body> = this.createDummies();
+    private readonly leftSensor: Body = Bodies.rectangle(this.vw(25), this.vh(50), this.vw(50), this.vh(100), {
+        isSensor: true,
+        isStatic: true,
+        render: {
+            visible: false
+        }
+    });
     private readonly touchBalls: Array<Body> = [];
 
     public constructor() {
@@ -19,31 +26,17 @@ export default class TestGame extends Game<HTMLDivElement> {
         this.engine.gravity.scale = 0;
         this.render.options.showDebug = true;
 
-        const leftSensor = Bodies.rectangle(this.vw(25), this.vh(50), this.vw(50), this.vh(100), {
-            isSensor: true,
-            isStatic: true,
-            render: {
-                visible: false
-            }
-        });
-        const getCollidedDummies: (e: IEventCollision<Engine>) => Array<Body> = event => {
-            const collidedDummies: Array<Body> = [];
-            for (const pair of event.pairs) {
-                if (pair.bodyA === leftSensor && this.dummies.has(pair.bodyB)) {
-                    collidedDummies.push(pair.bodyB);
-                } else if (pair.bodyB === leftSensor && this.dummies.has(pair.bodyA)) {
-                    collidedDummies.push(pair.bodyA);
-                }
-            }
-            return collidedDummies;
-        };
-        Events.on(this.engine, 'collisionStart', event => getCollidedDummies(event).forEach(dummy => dummy.render.opacity = 0.5));
-        Events.on(this.engine, 'collisionEnd', event => getCollidedDummies(event).forEach(dummy => dummy.render.opacity = 1.0));
-        Events.on(this.engine, 'beforeUpdate', () => {
+        this.engine.onCollisionStart(pairs => this.getCollidedDummies(pairs).forEach(dummy => dummy.render.opacity = 0.5));
+        this.engine.onCollisionEnd(pairs => this.getCollidedDummies(pairs).forEach(dummy => dummy.render.opacity = 1.0));
+        this.engine.onBeforeUpdate(() => {
             for (let dummy of this.dummies) {
                 if (!Bounds.overlaps(this.render.bounds, dummy.bounds)) {
                     Body.translate(dummy, Vector.create(this.vw(50) - dummy.position.x, this.vh(50) - dummy.position.y))
                 }
+            }
+        });
+        this.engine.onBeforeUpdate(() => {
+            for (let dummy of this.dummies) {
                 const velocityDistance = utils.distance(dummy.velocity);
                 if (velocityDistance >= 1e-5) {
                     const normalized = utils.directionNormalize(dummy.velocity);
@@ -52,8 +45,8 @@ export default class TestGame extends Game<HTMLDivElement> {
             }
         });
 
-        Composite.add(this.engine.world, [
-            leftSensor,
+        this.engine.world.add([
+            this.leftSensor,
             ...this.borders,
             ...this.dummies
         ]);
@@ -61,7 +54,7 @@ export default class TestGame extends Game<HTMLDivElement> {
 
     public onClickStart(click: CanvasClick): void {
         if (this.touchBalls[click.identifier]) {
-            Composite.remove(this.engine.world, this.touchBalls[click.identifier]);
+            this.engine.world.remove(this.touchBalls[click.identifier]);
         }
         this.touchBalls[click.identifier] = Bodies.circle(click.x, click.y, this.vw(7), {
             isStatic: true,
@@ -69,19 +62,16 @@ export default class TestGame extends Game<HTMLDivElement> {
                 fillStyle: new ColorHSLA(click.identifier * 30).toString()
             }
         });
-        Composite.add(this.engine.world, this.touchBalls[click.identifier]);
+        this.engine.world.add(this.touchBalls[click.identifier]);
     }
 
     public onClickMove(click: CanvasClick): void {
-        const ball = this.touchBalls[click.identifier];
-        if (ball) {
-            Body.setPosition(ball, {x: click.x, y: click.y});
-        }
+        this.touchBalls[click.identifier]?.setPosition(Vector.create(click.x, click.y));
     }
 
     public onClickEnd(click: CanvasClick): void {
         if (this.touchBalls[click.identifier]) {
-            Composite.remove(this.engine.world, this.touchBalls[click.identifier]);
+            this.engine.world.remove(this.touchBalls[click.identifier]);
             delete this.touchBalls[click.identifier];
         }
     }
@@ -131,4 +121,16 @@ export default class TestGame extends Game<HTMLDivElement> {
         }
         return bodies;
     }
+
+    private getCollidedDummies(pairs: Array<IPair>): Array<Body> {
+        const collidedDummies: Array<Body> = [];
+        for (const pair of pairs) {
+            if (pair.bodyA === this.leftSensor && this.dummies.has(pair.bodyB)) {
+                collidedDummies.push(pair.bodyB);
+            } else if (pair.bodyB === this.leftSensor && this.dummies.has(pair.bodyA)) {
+                collidedDummies.push(pair.bodyA);
+            }
+        }
+        return collidedDummies;
+    };
 }
