@@ -1,13 +1,30 @@
-import {Bodies, Body, Engine, Render, Runner} from "matter-js";
+import {Bodies, Bounds, Engine, IChamferableBodyDefinition, Render, Runner, Vector} from "matter-js";
 import CanvasClick from 'canvas-click-wrapper';
+import {getScreenSize} from "@/utils/utils";
 
-export const WIDTH = 1080;
-export const HEIGHT = 720;
+const BORDER_WALLS_OPTIONS: IChamferableBodyDefinition = {
+    label: "border-wall",
+    isStatic: true,
+    render: {
+        visible: false
+    },
+    restitution: 1,
+    friction: 0,
+    frictionAir: 0,
+    mass: 0
+};
 
 export default abstract class Game<El extends HTMLElement> {
     public readonly engine: Engine;
     public readonly runner: Runner;
     public readonly render: Render;
+
+    protected borderWalls = [
+        Bodies.rectangle(0, 0, 0, 0, BORDER_WALLS_OPTIONS), //top
+        Bodies.rectangle(0, 0, 0, 0, BORDER_WALLS_OPTIONS), //bottom
+        Bodies.rectangle(0, 0, 0, 0, BORDER_WALLS_OPTIONS), //left
+        Bodies.rectangle(0, 0, 0, 0, BORDER_WALLS_OPTIONS), //right
+    ] as const;
 
     protected constructor(
             public readonly id: string,
@@ -21,14 +38,14 @@ export default abstract class Game<El extends HTMLElement> {
             element: this.element,
             canvas: this.canvas,
             options: {
-                width: WIDTH,
-                height: HEIGHT,
-
                 wireframes: false,
                 showDebug: false,
                 showSleeping: false
             }
         })
+
+        window.onresize = this.onResize.bind(this, false);
+        this.onResize(true);
 
         this.element.id = id;
         this.engine.gravity.scale = 0;
@@ -63,34 +80,53 @@ export default abstract class Game<El extends HTMLElement> {
     public onClickEnd(click: CanvasClick): void {
     }
 
+    public onResize(force: boolean): void {
+        const {width, height} = getScreenSize();
+        if (!force && this.canvas.width === width && this.canvas.height === height)
+            return;
+
+        this.canvas.width = width;
+        this.canvas.height = height;
+
+        this.render.options.width = width;
+        this.render.options.height = height;
+
+        this.borderWalls[0].setPosition(this.halfWidth, this.vh(-25));
+        this.borderWalls[1].setPosition(this.halfWidth, this.vh(125));
+        this.borderWalls[2].setPosition(this.vw(-25), this.halfHeight);
+        this.borderWalls[3].setPosition(this.vw(125), this.halfHeight);
+        this.borderWalls[0].applyRectangle(this.fullWidth, this.halfHeight);
+        this.borderWalls[1].applyRectangle(this.fullWidth, this.halfHeight);
+        this.borderWalls[2].applyRectangle(this.halfWidth, this.fullHeight);
+        this.borderWalls[3].applyRectangle(this.halfWidth, this.fullHeight);
+        this.render.bounds = Bounds.create([Vector.create(0, 0), Vector.create(width, height)]);
+    }
+
     public vw(ratio: number) {
-        return this.render.canvas.width * ratio / 100;
+        return this.canvas.width * ratio / 100;
     }
 
     public vh(ratio: number) {
-        return this.render.canvas.height * ratio / 100;
+        return this.canvas.height * ratio / 100;
     }
 
     public vm(ratio: number) {
         return (this.vw(ratio) + this.vh(ratio)) / 2;
     }
 
+    public get fullWidth(): number {
+        return this.canvas.width;
+    }
 
-    protected createBorderWalls(): Array<Body> {
-        const option = {
-            label: "border-wall",
-            ...{isStatic: true, render: {visible: false}},
-            restitution: 1,
-            friction: 0,
-            frictionAir: 0,
-            mass: 0,
-        };
+    public get fullHeight(): number {
+        return this.canvas.height;
+    }
 
-        return [
-            Bodies.rectangle(this.vw(50), this.vh(-25), this.vw(100), this.vh(50), option), //top
-            Bodies.rectangle(this.vw(50), this.vh(125), this.vw(100), this.vh(50), option), //bottom
-            Bodies.rectangle(this.vw(-25), this.vh(50), this.vw(50), this.vh(100), option), //left
-            Bodies.rectangle(this.vw(125), this.vh(50), this.vw(50), this.vh(100), option), //right
-        ];
+    public get halfWidth(): number {
+        return this.canvas.width / 2;
+    }
+
+    public get halfHeight(): number {
+        return this.canvas.height / 2;
     }
 }

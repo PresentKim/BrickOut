@@ -4,7 +4,7 @@ import Game from "@/game/Game";
 import {setBodySpeed} from "@/utils/utils";
 import ColorHSLA from "@/utils/ColorHSLA";
 
-const DUMMY_COUNT = 100;
+const DUMMY_COUNT = 50;
 
 export default class TestGame extends Game<HTMLDivElement> {
     private readonly dummies: Set<Body> = this.createDummies();
@@ -30,15 +30,13 @@ export default class TestGame extends Game<HTMLDivElement> {
                     Body.translate(dummy, Vector.create(this.vw(50) - dummy.position.x, this.vh(50) - dummy.position.y))
                 }
             }
-        });
-        this.engine.onBeforeUpdate(() => {
             this.dummies.forEach(dummy => setBodySpeed(dummy, this.vw(0.3)));
         });
 
         this.engine.world.add([
             this.leftSensor,
             ...this.dummies,
-            ...this.createBorderWalls()
+            ...this.borderWalls
         ]);
     }
 
