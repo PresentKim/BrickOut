@@ -1,4 +1,4 @@
-import {Body, Events, IBodyDefinition, Vector} from 'matter-js';
+import {Bodies, Body, Events, IBodyDefinition, Vector} from 'matter-js';
 
 declare module 'matter-js' {
     interface Body {
@@ -50,6 +50,8 @@ declare module 'matter-js' {
         /** Sets the position of the body instantly. Velocity, angle, force etc. are unchanged. */
         setPosition(position: Vector): void;
 
+        setPosition(x: number, y: number): void;
+
         /** Sets the angle of the body instantly. Angular velocity, position, force etc. are unchanged. */
         setAngle(angle: number): void;
 
@@ -58,7 +60,6 @@ declare module 'matter-js' {
 
         /** Sets the angular velocity of the body instantly. Position, angle, force etc. are unchanged. See also `Body.applyForce`. */
         setAngularVelocity(velocity: number): void;
-
 
         /** Sets the body as , including isStatic flag and setting mass and inertia to Infinity. */
         setStatic(isStatic: boolean): void;
@@ -70,17 +71,29 @@ declare module 'matter-js' {
         translate(translation: Vector): void;
 
         /** Fired listener when body started sleep */
-        onSleepStart(listener: (body: this) => void);
+        onSleepStart(listener: (body: this) => void): void;
 
         /** Fired listener when body ended sleep */
-        onSleepEnd(listener: (body: this) => void);
+        onSleepEnd(listener: (body: this) => void): void;
+
+        /** Set rigid body model with a circle hull. */
+        applyCircle(radius: number, maxSides?: number): void;
+
+        /** Set rigid body model with a regular polygon hull with the given number of sides. */
+        applyPolygon(sides: number, radius: number): void;
+
+        /** Set rigid body model with a rectangle hull. */
+        applyRectangle(width: number, height: number): void;
+
+        /** Set a new rigid body model with a trapezoid hull. */
+        applyTrapezoid(width: number, height: number, slope: number): void;
     }
 }
 
 export const originCreate = Body.create;
 const props: (keyof Body)[] = [
     "applyForce", "rotate", "setMass", "setDensity", "setInertia",
-    "setVertices", "setParts", "setCentre", "setPosition", "setAngle",
+    "setVertices", "setParts", "setCentre", "setAngle",
     "setVelocity", "setAngularVelocity", "setStatic", "scale", "translate"
 ];
 
@@ -89,5 +102,13 @@ Body.create = function (options: IBodyDefinition): Body {
     for (const prop of props) instance[prop as string] = Body[prop].bind(null, instance);
     instance.onSleepStart = listener => Events.on(instance, "sleepStart", listener.bind(null, instance));
     instance.onSleepEnd = listener => Events.on(instance, "sleepEnd", listener.bind(null, instance));
+    instance.setPosition = function (vec: Vector | number, y?: number) {
+        if (typeof vec === "number") vec = Vector.create(vec, y);
+        Body.setPosition(instance, vec);
+    };
+    instance.applyCircle = (radius: number, maxSides?: number) => instance.setVertices(Bodies.circle(0, 0, radius, null, maxSides).vertices);
+    instance.applyPolygon = (sides: number, radius: number) => instance.setVertices(Bodies.polygon(0, 0, radius, null).vertices);
+    instance.applyRectangle = (width: number, height: number) => instance.setVertices(Bodies.rectangle(0, 0, width, height).vertices);
+    instance.applyTrapezoid = (width: number, height: number, slope: number) => instance.setVertices(Bodies.trapezoid(0, 0, width, height, slope).vertices);
     return instance;
 };
