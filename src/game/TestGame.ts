@@ -4,13 +4,9 @@ import Game from "@/game/Game";
 import utils from "@/utils/utils";
 import ColorHSLA from "@/utils/ColorHSLA";
 
-const INVISIBLE = {visible: false};
-const STATIC_INVISIBLE = {isStatic: true, render: INVISIBLE};
-
 const DUMMY_COUNT = 100;
 
 export default class TestGame extends Game<HTMLDivElement> {
-    private readonly borders: Set<Body> = this.createBorderWalls();
     private readonly dummies: Set<Body> = this.createDummies();
     private readonly leftSensor: Body = Bodies.rectangle(this.vw(25), this.vh(50), this.vw(50), this.vh(100), {
         isSensor: true,
@@ -47,8 +43,8 @@ export default class TestGame extends Game<HTMLDivElement> {
 
         this.engine.world.add([
             this.leftSensor,
-            ...this.borders,
-            ...this.dummies
+            ...this.dummies,
+            ...this.createBorderWalls()
         ]);
     }
 
@@ -74,24 +70,6 @@ export default class TestGame extends Game<HTMLDivElement> {
             this.engine.world.remove(this.touchBalls[click.identifier]);
             delete this.touchBalls[click.identifier];
         }
-    }
-
-    private createBorderWalls(): Set<Body> {
-        const option = {
-            label: "border-wall",
-            ...STATIC_INVISIBLE,
-            restitution: 1,
-            friction: 0,
-            frictionAir: 0,
-            mass: 0,
-        };
-
-        return new Set([
-            Bodies.rectangle(this.vw(50), this.vh(-25), this.vw(100), this.vh(50), option), //top
-            Bodies.rectangle(this.vw(50), this.vh(125), this.vw(100), this.vh(50), option), //bottom
-            Bodies.rectangle(this.vw(-25), this.vh(50), this.vw(50), this.vh(100), option), //left
-            Bodies.rectangle(this.vw(125), this.vh(50), this.vw(50), this.vh(100), option), //right
-        ]);
     }
 
     private createDummies(): Set<Body> {

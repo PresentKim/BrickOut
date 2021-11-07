@@ -1,4 +1,4 @@
-import {Engine, Render, Runner} from "matter-js";
+import {Bodies, Body, Engine, Render, Runner} from "matter-js";
 import CanvasClick from 'canvas-click-wrapper';
 
 export const WIDTH = 1080;
@@ -73,5 +73,24 @@ export default abstract class Game<El extends HTMLElement> {
 
     public vm(ratio: number) {
         return (this.vw(ratio) + this.vh(ratio)) / 2;
+    }
+
+
+    protected createBorderWalls(): Array<Body> {
+        const option = {
+            label: "border-wall",
+            ...{isStatic: true, render: {visible: false}},
+            restitution: 1,
+            friction: 0,
+            frictionAir: 0,
+            mass: 0,
+        };
+
+        return [
+            Bodies.rectangle(this.vw(50), this.vh(-25), this.vw(100), this.vh(50), option), //top
+            Bodies.rectangle(this.vw(50), this.vh(125), this.vw(100), this.vh(50), option), //bottom
+            Bodies.rectangle(this.vw(-25), this.vh(50), this.vw(50), this.vh(100), option), //left
+            Bodies.rectangle(this.vw(125), this.vh(50), this.vw(50), this.vh(100), option), //right
+        ];
     }
 }
