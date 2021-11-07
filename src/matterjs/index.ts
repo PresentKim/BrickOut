@@ -5,5 +5,4 @@ import "./Engine";
 import "./Grid";
 import "./Render";
 import "./Runner";
-import "./Vector";
 import "./Vertices";
