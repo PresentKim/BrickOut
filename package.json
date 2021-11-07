@@ -50,8 +50,7 @@
         "@types/matter-js": "^0.17.6",
         "canvas-click-wrapper": "^1.0.0",
         "fullscreen-wrapper": "^1.1.0",
-        "matter-js": "^0.17.1",
-        "phaser": "^3.55.2"
+        "matter-js": "^0.17.1"
     },
     "packageManager": "yarn@3.1.0"
 }

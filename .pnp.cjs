@@ -53,7 +53,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["html-webpack-plugin", "virtual:0f980405e486650d313754f6094bf46ad495c9833df6b69b22a26de73aba322ac9f60a89054b76fb25278f96d108f24c90cf543dd3c2007344f965d9ed83bba6#npm:5.5.0"],
             ["image-webpack-loader", "npm:8.0.1"],
             ["matter-js", "npm:0.17.1"],
-            ["phaser", "npm:3.55.2"],
             ["style-loader", "virtual:0f980405e486650d313754f6094bf46ad495c9833df6b69b22a26de73aba322ac9f60a89054b76fb25278f96d108f24c90cf543dd3c2007344f965d9ed83bba6#npm:3.3.1"],
             ["typescript", "patch:typescript@npm%3A4.4.4#~builtin<compat/typescript>::version=4.4.4&hash=ddd1e8"],
             ["webpack", "virtual:0f980405e486650d313754f6094bf46ad495c9833df6b69b22a26de73aba322ac9f60a89054b76fb25278f96d108f24c90cf543dd3c2007344f965d9ed83bba6#npm:5.62.1"],
@@ -7560,17 +7559,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
-      ["path", [
-        ["npm:0.12.7", {
-          "packageLocation": "./.yarn/cache/path-npm-0.12.7-bddabe2e86-5dedb71e78.zip/node_modules/path/",
-          "packageDependencies": [
-            ["path", "npm:0.12.7"],
-            ["process", "npm:0.11.10"],
-            ["util", "npm:0.10.4"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
       ["path-exists", [
         ["npm:2.1.0", {
           "packageLocation": "./.yarn/cache/path-exists-npm-2.1.0-be4aa2cccc-fdb734f1d0.zip/node_modules/path-exists/",
@@ -7655,17 +7643,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/pend-npm-1.2.0-7a13d93266-6c72f52433.zip/node_modules/pend/",
           "packageDependencies": [
             ["pend", "npm:1.2.0"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["phaser", [
-        ["npm:3.55.2", {
-          "packageLocation": "./.yarn/cache/phaser-npm-3.55.2-6caf8d817e-51c7663389.zip/node_modules/phaser/",
-          "packageDependencies": [
-            ["phaser", "npm:3.55.2"],
-            ["eventemitter3", "npm:4.0.7"],
-            ["path", "npm:0.12.7"]
           ],
           "linkType": "HARD",
         }]
@@ -7912,15 +7889,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["pretty-error", "npm:4.0.0"],
             ["lodash", "npm:4.17.21"],
             ["renderkid", "npm:3.0.0"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["process", [
-        ["npm:0.11.10", {
-          "packageLocation": "./.yarn/cache/process-npm-0.11.10-aeb3b641ae-bfcce49814.zip/node_modules/process/",
-          "packageDependencies": [
-            ["process", "npm:0.11.10"]
           ],
           "linkType": "HARD",
         }]
@@ -9473,16 +9441,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
-      ["util", [
-        ["npm:0.10.4", {
-          "packageLocation": "./.yarn/cache/util-npm-0.10.4-7c577db41a-913f9a90d0.zip/node_modules/util/",
-          "packageDependencies": [
-            ["util", "npm:0.10.4"],
-            ["inherits", "npm:2.0.3"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
       ["util-deprecate", [
         ["npm:1.0.2", {
           "packageLocation": "./.yarn/cache/util-deprecate-npm-1.0.2-e3fe1a219c-474acf1146.zip/node_modules/util-deprecate/",
@@ -9562,7 +9520,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["html-webpack-plugin", "virtual:0f980405e486650d313754f6094bf46ad495c9833df6b69b22a26de73aba322ac9f60a89054b76fb25278f96d108f24c90cf543dd3c2007344f965d9ed83bba6#npm:5.5.0"],
             ["image-webpack-loader", "npm:8.0.1"],
             ["matter-js", "npm:0.17.1"],
-            ["phaser", "npm:3.55.2"],
             ["style-loader", "virtual:0f980405e486650d313754f6094bf46ad495c9833df6b69b22a26de73aba322ac9f60a89054b76fb25278f96d108f24c90cf543dd3c2007344f965d9ed83bba6#npm:3.3.1"],
             ["typescript", "patch:typescript@npm%3A4.4.4#~builtin<compat/typescript>::version=4.4.4&hash=ddd1e8"],
             ["webpack", "virtual:0f980405e486650d313754f6094bf46ad495c9833df6b69b22a26de73aba322ac9f60a89054b76fb25278f96d108f24c90cf543dd3c2007344f965d9ed83bba6#npm:5.62.1"],
