@@ -1,7 +1,7 @@
 import {Bodies, Body, Bounds, IPair, Vector} from "matter-js";
 import CanvasClick from 'canvas-click-wrapper';
 import Game from "@/game/Game";
-import utils from "@/utils/utils";
+import {setBodySpeed} from "@/utils/utils";
 import ColorHSLA from "@/utils/ColorHSLA";
 
 const DUMMY_COUNT = 100;
@@ -32,13 +32,7 @@ export default class TestGame extends Game<HTMLDivElement> {
             }
         });
         this.engine.onBeforeUpdate(() => {
-            for (let dummy of this.dummies) {
-                const velocityDistance = utils.distance(dummy.velocity);
-                if (velocityDistance >= 1e-5) {
-                    const normalized = utils.directionNormalize(dummy.velocity);
-                    dummy.force = Vector.create(normalized.x * (this.vw(0.3) - velocityDistance), normalized.y * (this.vh(0.3) - velocityDistance))
-                }
-            }
+            this.dummies.forEach(dummy => setBodySpeed(dummy, this.vw(0.3)));
         });
 
         this.engine.world.add([
