@@ -68,7 +68,7 @@ export default class TestGame extends Game<HTMLDivElement> {
     public onClickEnd(click: CanvasClick): void {
         if (this.touchBalls[click.identifier]) {
             this.engine.world.remove(this.touchBalls[click.identifier]);
-            delete this.touchBalls[click.identifier];
+            this.touchBalls.splice(click.identifier, 1);
         }
     }
 
