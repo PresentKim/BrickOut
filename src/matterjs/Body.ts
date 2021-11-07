@@ -77,7 +77,7 @@ declare module 'matter-js' {
     }
 }
 
-const create = Body.create;
+export const originCreate = Body.create;
 const props: (keyof Body)[] = [
     "applyForce", "rotate", "setMass", "setDensity", "setInertia",
     "setVertices", "setParts", "setCentre", "setPosition", "setAngle",
@@ -85,7 +85,7 @@ const props: (keyof Body)[] = [
 ];
 
 Body.create = function (options: IBodyDefinition): Body {
-    const instance: Body = create(options);
+    const instance: Body = originCreate(options);
     for (const prop of props) instance[prop as string] = Body[prop].bind(null, instance);
     instance.onSleepStart = listener => Events.on(instance, "sleepStart", listener.bind(null, instance));
     instance.onSleepEnd = listener => Events.on(instance, "sleepEnd", listener.bind(null, instance));

@@ -19,11 +19,11 @@ declare module "matter-js" {
     }
 }
 
-const create = Bounds.create;
+export const originCreate = Bounds.create;
 const props: (keyof Bounds)[] = ["contains", "overlaps", "update", "translate", "shift"];
 
 Bounds.create = function (vertices: Vertices): Bounds {
-    const instance: Bounds = create(vertices);
+    const instance: Bounds = originCreate(vertices);
     for (const prop of props) instance[prop] = Bounds[prop].bind(null, instance);
     return instance;
 }

@@ -49,7 +49,7 @@ declare module "matter-js" {
     }
 }
 
-const createVector = Vector.create;
+export const originCreate = Vector.create;
 const props: (keyof Vector)[] = [
     "clone", "add", "angle", "cross", "div", "dot",
     "magnitude", "magnitudeSquared", "mult", "neg",
@@ -66,5 +66,5 @@ function bindVector(vec: Vector): Vector {
 }
 
 Vector.create = function (x: number = 0, y: number = 0): Vector {
-    return bindVector(createVector(x, y));
+    return bindVector(originCreate(x, y));
 }

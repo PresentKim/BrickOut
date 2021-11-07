@@ -38,11 +38,11 @@ declare module "matter-js" {
     }
 }
 
-const create = Engine.create;
+export const originCreate = Engine.create;
 const props: (keyof Engine)[] = ["clear", "merge", "update"];
 
 Engine.create = function (element?: HTMLElement | IEngineDefinition, options?: IEngineDefinition): Engine {
-    const instance: Engine = create(element, options);
+    const instance: Engine = originCreate(element, options);
     for (const prop of props) instance[prop as string] = Engine[prop].bind(null, instance);
     instance.onBeforeUpdate = listener => Events.on(instance, "beforeUpdate", event => listener(event.timestamp));
     instance.onAfterUpdate = listener => Events.on(instance, "afterUpdate", event => listener(event.timestamp));

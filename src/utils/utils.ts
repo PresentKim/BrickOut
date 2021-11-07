@@ -6,7 +6,7 @@ export function distance(v: Vector): number {
 
 export function directionNormalize(direction: Vector): Vector {
     const yaw = Math.atan2(direction.y, direction.x)
-    return Vector.create(Math.cos(yaw) * 0.001, Math.sin(yaw) * 0.001);
+    return Vector.create(Math.cos(yaw), Math.sin(yaw)).mult(0.001);
 }
 
 export function setBodySpeed(body: Body, speed: number, limit: number = 1e-5): void {
@@ -19,5 +19,6 @@ export function setBodySpeed(body: Body, speed: number, limit: number = 1e-5): v
 
 export default {
     distance,
-    directionNormalize
+    directionNormalize,
+    setBodySpeed
 }

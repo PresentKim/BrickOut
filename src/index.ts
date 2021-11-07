@@ -1,7 +1,7 @@
 import "@/styles/index.css";
 import Game from "@/game/Game";
+import "@/matterjs"
 import TestGame from "@/game/TestGame";
-import "@/utils/matter-js-wrapper"
 
 const games: Game<any>[] = [];
 

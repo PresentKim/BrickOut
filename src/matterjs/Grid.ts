@@ -10,11 +10,11 @@ declare module "matter-js" {
     }
 }
 
-const create = Grid.create;
+export const originCreate = Grid.create;
 const props: (keyof Grid)[] = ["update", "clear"];
 
 Grid.create = function (options?: IGridDefinition): Grid {
-    const instance = create(options);
+    const instance = originCreate(options);
     for (const prop of props) instance[prop as string] = Grid[prop].bind(null, instance);
     return instance;
 }

@@ -16,11 +16,11 @@ declare module "matter-js" {
     }
 }
 
-const create = Render.create;
+export const originCreate = Render.create;
 const props: (keyof Render)[] = ["run", "stop", "setPixelRatio", "lookAt"];
 
 Render.create = function (options?: IRenderDefinition): Render {
-    const instance = create(options);
+    const instance = originCreate(options);
     for (const prop of props) instance[prop as string] = Render[prop].bind(null, instance);
     return instance;
 }

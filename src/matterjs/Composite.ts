@@ -66,14 +66,14 @@ declare module "matter-js" {
     }
 }
 
-const create = Composite.create;
+export const originCreate = Composite.create;
 const props: (keyof Composite)[] = [
     "allBodies", "allComposites", "allConstraints", "rebase", "add", "remove",
     "clear", "move", "setModified", "translate", "rotate", "scale"
 ];
 
 Composite.create = function (options: ICompositeDefinition = {}): Composite {
-    const instance: Composite = create(options);
+    const instance: Composite = originCreate(options);
     for (const prop of props) instance[prop as string] = Composite[prop].bind(null, instance);
     instance.onBeforeAdd = listener => Events.on(instance, "beforeAdd", e => listener(e.object));
     instance.onAfterAdd = listener => Events.on(instance, "afterAdd", e => listener(e.object));

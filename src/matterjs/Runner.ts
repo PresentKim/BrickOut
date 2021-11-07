@@ -24,11 +24,11 @@ declare module "matter-js" {
     }
 }
 
-const create = Runner.create;
+export const originCreate = Runner.create;
 const props: (keyof Runner)[] = ["run", "stop", "tick"];
 
 Runner.create = function (options?: IRunnerOptions): Runner {
-    const instance = create(options);
+    const instance = originCreate(options);
     for (const prop of props) instance[prop as string] = Runner[prop].bind(null, instance);
     return instance;
 }
