@@ -1,6 +1,5 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const manifest = require("./site.webmanifest.json")
 
 module.exports = {
     entry: {
@@ -20,13 +19,13 @@ module.exports = {
     target: ["web", "es5"],
     plugins: [
         new HtmlWebpackPlugin({
-            title: manifest.name,
-            name: manifest.name,
-            short_name: manifest.short_name,
+            title: "TwinHead Games :: BrickOut",
+            name: "BrickOut",
+            short_name: "BrickOut",
             favicon: "./assets/icon/favicon.ico",
             meta: {
                 viewport: "user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height",
-                description: manifest.description
+                description: "BrickOut Game of TwinHead Games"
             }
         })
     ],
