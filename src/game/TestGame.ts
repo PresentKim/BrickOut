@@ -63,16 +63,23 @@ export default class TestGame extends Game<HTMLDivElement> {
         if (this.touchBalls[click.identifier]) {
             const dummy = this.touchBalls.splice(click.identifier, 1)[0];
             this.dummies.add(dummy);
+            if (this.dummies.size > DUMMY_COUNT * 1.5) {
+                const first = this.dummies.values().next().value;
+                this.dummies.delete(first);
+                this.engine.world.remove(first);
+            }
             dummy.isStatic = false;
 
-            const diff = 1 - this.vm(5 + Math.random() * 3) / this.vm(10);
+            const diff = 1 - this.vm(3 + Math.random() * 2) / this.vm(10);
             let times = 100;
             const func = () => {
                 if (times-- <= 0)
                     return;
 
                 dummy.scale(1 - diff / 100, 1 - diff / 100);
-                setTimeout(func, 10);
+                dummy.render.sprite.xScale *= 1 - diff / 100;
+                dummy.render.sprite.yScale *= 1 - diff / 100;
+                setTimeout(func, 5);
             }
             func();
         }
@@ -88,14 +95,13 @@ export default class TestGame extends Game<HTMLDivElement> {
 
     private createDummy(size: number): Body {
         const color = new ColorHSLA(Math.random() * 360);
-        return Render.cacheTexture(this.render, Bodies.polygon(
+        return Render.cacheTexture(this.render, Bodies.circle(
                 this.vw(Math.random() * 100),
                 this.vh(Math.random() * 100),
-                3 + Math.random() * 3,
                 size,
                 {
                     label: `dummy`,
-                    restitution: 1,
+                    restitution: 0,
                     friction: 0,
                     frictionAir: 0,
                     render: {
