@@ -1,4 +1,5 @@
 import {Bodies, Body, Events, IBodyDefinition, Vector} from 'matter-js';
+import {directionNormalize, distance} from "@/utils/utils";
 
 declare module 'matter-js' {
     interface Body {
@@ -46,6 +47,8 @@ declare module 'matter-js' {
          * Invalid if the `centre` falls outside the body's convex hull.
          */
         setCentre(centre: Vector, relative?: boolean): void;
+
+        setMotion(speed: number, limit?: number): void;
 
         /** Sets the position of the body instantly. Velocity, angle, force etc. are unchanged. */
         setPosition(position: Vector): void;
@@ -110,5 +113,12 @@ Body.create = function (options: IBodyDefinition): Body {
     instance.applyPolygon = (sides: number, radius: number) => instance.setVertices(Bodies.polygon(0, 0, radius, null).vertices);
     instance.applyRectangle = (width: number, height: number) => instance.setVertices(Bodies.rectangle(0, 0, width, height).vertices);
     instance.applyTrapezoid = (width: number, height: number, slope: number) => instance.setVertices(Bodies.trapezoid(0, 0, width, height, slope).vertices);
+    instance.setMotion = (speed, limit = 1e-5) => {
+        const velocityDistance = distance(instance.velocity);
+        if (velocityDistance >= limit) {
+            const normalized = directionNormalize(instance.velocity);
+            instance.force = Vector.create(normalized.x * (speed - velocityDistance), normalized.y * (speed - velocityDistance))
+        }
+    };
     return instance;
 };

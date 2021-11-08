@@ -1,7 +1,6 @@
 import {Bodies, Body, Bounds, IPair, Render, Vector} from "matter-js";
 import CanvasClick from 'canvas-click-wrapper';
 import Game from "@/game/Game";
-import {setBodySpeed} from "@/utils/utils";
 import ColorHSLA from "@/utils/ColorHSLA";
 
 const DUMMY_COUNT = 30;
@@ -29,8 +28,8 @@ export default class TestGame extends Game<HTMLDivElement> {
                 if (!Bounds.overlaps(this.render.bounds, dummy.bounds)) {
                     Body.translate(dummy, Vector.create(this.vw(50) - dummy.position.x, this.vh(50) - dummy.position.y))
                 }
+                dummy.setMotion(this.vw(0.3));
             }
-            this.dummies.forEach(dummy => setBodySpeed(dummy, this.vw(0.3)));
         });
 
         this.engine.world.add([
