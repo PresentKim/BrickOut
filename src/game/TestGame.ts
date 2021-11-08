@@ -4,7 +4,7 @@ import Game from "@/game/Game";
 import {setBodySpeed} from "@/utils/utils";
 import ColorHSLA from "@/utils/ColorHSLA";
 
-const DUMMY_COUNT = 50;
+const DUMMY_COUNT = 30;
 
 export default class TestGame extends Game<HTMLDivElement> {
     private readonly dummies: Set<Body> = this.createDummies();
@@ -44,12 +44,9 @@ export default class TestGame extends Game<HTMLDivElement> {
         if (this.touchBalls[click.identifier]) {
             this.engine.world.remove(this.touchBalls[click.identifier]);
         }
-        this.touchBalls[click.identifier] = Bodies.circle(click.x, click.y, this.vw(7), {
-            isStatic: true,
-            render: {
-                fillStyle: new ColorHSLA(click.identifier * 30).toString()
-            }
-        });
+        this.touchBalls[click.identifier] = this.createDummy(this.vm(10));
+        this.touchBalls[click.identifier].isStatic = true;
+        this.touchBalls[click.identifier].setPosition(click.x, click.y);
         this.engine.world.add(this.touchBalls[click.identifier]);
     }
 
@@ -59,37 +56,56 @@ export default class TestGame extends Game<HTMLDivElement> {
 
     public onClickEnd(click: CanvasClick): void {
         if (this.touchBalls[click.identifier]) {
-            this.engine.world.remove(this.touchBalls[click.identifier]);
-            this.touchBalls.splice(click.identifier, 1);
+            const dummy = this.touchBalls.splice(click.identifier, 1)[0];
+            this.dummies.add(dummy);
+            dummy.isStatic = false;
+
+            const diff = 1 - this.vm(5 + Math.random() * 3) / this.vm(10);
+            let times = 100;
+            const func = () => {
+                if (times-- <= 0)
+                    return;
+
+                dummy.scale(1 - diff / 100, 1 - diff / 100);
+                setTimeout(func, 10);
+            }
+            func();
         }
     }
 
     private createDummies(): Set<Body> {
         const bodies: Set<Body> = new Set();
         for (let i = 0; i < DUMMY_COUNT; ++i) {
-            let size = this.vm(5 + Math.random() * 6);
-            bodies.add(Bodies.rectangle(
-                    this.vw(Math.random() * 100),
-                    this.vh(Math.random() * 100),
-                    size,
-                    size,
-                    {
-                        label: `dummy-${i}`,
-                        restitution: 1,
-                        friction: 0,
-                        frictionAir: 0,
-                        render: {
-                            fillStyle: "white",
-                            sprite: {
-                                texture: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAoElEQVQ4jWNkgAJFeYP/DBSA+w8vMDIwMDCwwAw7rC1FiXkMtgwM/+8/vMDISA3D4IZefQZxITYgvXUrXs1Pvb2ximMYSMggdHXoBjMRpZsEgGIgsa7DpwenC596e2MNJ1ziBA1ENgAbm2wDSQVUN5CkdEhMpNHWy+iBjiuW8fEHf6RQvbRhgjGoYRgDA9SFFJuGBBgZGCgv/mHg/sMLjAD7BDkUM4L9HwAAAABJRU5ErkJggg==",
-                                xScale: size / 20,
-                                yScale: size / 20
-                            }
-                        },
-                        force: Vector.mult(Vector.create(Math.random() - 0.5, Math.random() - 0.5), 1e-3)
-                    }));
+            bodies.add(this.createDummy(this.vm(5 + Math.random() * 3)));
         }
         return bodies;
+    }
+
+    private createDummy(size: number): Body {
+        const color = new ColorHSLA(Math.random() * 360);
+        return Bodies.polygon(
+                this.vw(Math.random() * 100),
+                this.vh(Math.random() * 100),
+                3 + Math.random() * 3,
+                size,
+                {
+                    label: `dummy`,
+                    restitution: 1,
+                    friction: 0,
+                    frictionAir: 0,
+                    render: {
+                        fillStyle: "rgba(0,0,0,0)",
+                        lineWidth: this.vm(0.7),
+                        strokeStyle: new ColorHSLA(color.h, 100, 70).toString(),
+                    },
+                    plugin: {
+                        shadow: {
+                            blur: this.vm(2),
+                            color: color.toString(),
+                        }
+                    },
+                    force: Vector.mult(Vector.create(Math.random() - 0.5, Math.random() - 0.5), 1e-3)
+                });
     }
 
     private getCollidedDummies(pairs: Array<IPair>): Array<Body> {
@@ -102,5 +118,5 @@ export default class TestGame extends Game<HTMLDivElement> {
             }
         }
         return collidedDummies;
-    };
+    }
 }
