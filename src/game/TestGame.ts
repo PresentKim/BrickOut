@@ -39,6 +39,12 @@ export default class TestGame extends Game<HTMLDivElement> {
         ]);
     }
 
+    public onResize(force: boolean) {
+        super.onResize(force);
+        this.leftSensor?.setPosition(this.vw(25), this.vh(50));
+        this.leftSensor?.applyRectangle(this.vw(50), this.vh(100));
+    }
+
     public onClickStart(click: CanvasClick): void {
         if (this.touchBalls[click.identifier]) {
             this.engine.world.remove(this.touchBalls[click.identifier]);
