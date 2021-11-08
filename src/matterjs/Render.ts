@@ -3,6 +3,8 @@ import {Body, IRenderDefinition, IRenderLookAtObject, Render, Vector} from 'matt
 declare module "matter-js" {
     namespace Render {
         function bodies(render: Render, bodies: Body[], context: CanvasRenderingContext2D): void;
+
+        function cacheTexture(render: Render, body: Body): Body;
     }
 
     interface Render {
@@ -126,3 +128,17 @@ Render.bodies = (render, bodies, context) => {
     renderDefault(render, defaultBodies, context);
     renderShadow(render, shadowBodies, context);
 };
+
+Render.cacheTexture = (render, body) => {
+    const bufferCanvas = document.createElement("canvas");
+    bufferCanvas.width = Math.abs(body.bounds.max.x - body.bounds.min.x) * 1.5;
+    bufferCanvas.height = Math.abs(body.bounds.max.y - body.bounds.min.y) * 1.5;
+
+    const originPosition = body.position;
+    body.setPosition(bufferCanvas.width / 2, bufferCanvas.height / 2);
+
+    Render.bodies(render, [body], bufferCanvas.getContext("2d"));
+    body.render.sprite.texture = bufferCanvas.toDataURL('image/png', 1);
+    body.setPosition(originPosition);
+    return body;
+}
