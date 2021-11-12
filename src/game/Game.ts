@@ -50,15 +50,7 @@ export default abstract class Game<El extends HTMLElement> {
         this.element.id = id;
         this.engine.gravity.scale = 0;
 
-        /**
-         * Disable smoothing feature of canvas context for use a clear dot image
-         * @url https://github.com/niklasvh/html2canvas/issues/576#issuecomment-316739410
-         */
-        (this.render.context as any).imageSmoothingEnabled = false; //standard
-        (this.render.context as any).mozImageSmoothingEnabled = false; //Firefox
-        (this.render.context as any).oImageSmoothingEnabled = false; //Opera
-        (this.render.context as any).webkitImageSmoothingEnabled = false; //Safari
-        (this.render.context as any).msImageSmoothingEnabled = false; //IE
+        this.render.context.disableImageSmoothing();
 
         CanvasClick.addClickListener('start', this.render.canvas, this.onClickStart.bind(this), this.render.canvas.parentElement);
         CanvasClick.addClickListener('move', this.render.canvas, this.onClickMove.bind(this), this.render.canvas.parentElement);
